@@ -12,16 +12,8 @@ import android.widget.TextView;
 import com.joselopezrosario.filemaker_assets.Asset;
 import com.joselopezrosario.filemaker_assets.R;
 import com.joselopezrosario.filemaker_assets.fragment.CheckinFragment;
-import com.squareup.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
 
 import java.util.Locale;
-
-import okhttp3.Cache;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class AssetDetailActivity extends AppCompatActivity {
 
@@ -36,13 +28,13 @@ public class AssetDetailActivity extends AppCompatActivity {
         Asset asset = getIntent().getParcelableExtra("RECORD_EXTRA");
 
         String assetName = asset.getItem();
-        String availability = asset.getStatus_verbose();
-        String assignedTo = asset.getAssigned_to();
+        String availability = asset.getStatusVerbose();
+        String assignedTo = asset.getAssignedTo();
         String condition = asset.getCondition();
         String location = asset.getLocation();
         String cost = String.valueOf(asset.getCost());
-        String dateDue = asset.getDate_due_AsString();
-        Bitmap image = asset.getThumbnail_image();
+        String dateDue = asset.getDateDueAsString();
+        Bitmap image = asset.getThumbnailImage();
 
         setText(R.id.detail_title_textview, assetName);
         setText(R.id.detail_availability_textview, availability);
@@ -78,7 +70,7 @@ public class AssetDetailActivity extends AppCompatActivity {
     }
 
     private void populateCheckoutStateFields(Asset record) {
-        setText(R.id.detail_checked_textview, String.format("Due %s", record.getDate_due_AsString()));
+        setText(R.id.detail_checked_textview, String.format("Due %s", record.getDateDueAsString()));
         Button checkInButton = findViewById(R.id.check_button);
         checkInButton.setText(R.string.check_in);
 

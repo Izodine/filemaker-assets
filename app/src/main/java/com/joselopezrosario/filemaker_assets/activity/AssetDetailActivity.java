@@ -1,29 +1,17 @@
 package com.joselopezrosario.filemaker_assets.activity;
 
-import android.content.Context;
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.joselopezrosario.androidfm.FmCookie;
-import com.joselopezrosario.androidfm.FmRecord;
+import com.joselopezrosario.filemaker_assets.Asset;
 import com.joselopezrosario.filemaker_assets.R;
 import com.joselopezrosario.filemaker_assets.fragment.CheckinFragment;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 
 import okhttp3.Cache;
@@ -42,26 +30,16 @@ public class AssetDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asset_detail);
 
-        String jsonString = getIntent().getStringExtra("RECORD_EXTRA");
-        JSONObject jsonObject;
-        FmRecord record = null;
+        Asset asset = getIntent().getParcelableExtra("RECORD_EXTRA");
 
-        try {
-            jsonObject = new JSONObject(jsonString);
-            Constructor<FmRecord> constructor = FmRecord.class.getDeclaredConstructor(JSONObject.class);
-            constructor.setAccessible(true);
-            record = constructor.newInstance(jsonObject);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | JSONException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-
-        String assetName = record.getValue("Item");
-        String availability = record.getValue("Verbose Status");
-        String assignedTo = record.getValue("Assigned To");
-        String condition = record.getValue("Condition");
-        String location = record.getValue("Location");
-        String cost = record.getValue("Cost");
-        String imageUrl = record.getValue("File 1 Container");
+        String assetName = asset.getItem();
+        String availability = asset.getStatus_verbose();
+        String assignedTo = asset.getAssigned_to();
+        String condition = asset.getCondition();
+        String location = asset.getLocation();
+        String cost = String.valueOf(asset.getCost());
+        String dateDue = asset.getDate_due_AsString();
+        Bitmap image = asset.getThumbnail_image();
 
         setText(R.id.detail_title_textview, assetName);
         setText(R.id.detail_availability_textview, availability);
@@ -69,6 +47,7 @@ public class AssetDetailActivity extends AppCompatActivity {
         setText(R.id.detail_condition_status, condition);
         setText(R.id.detail_location_textview, location);
         setText(R.id.detail_book_value_textview, String.format(Locale.ENGLISH, "$%s", cost));
+        setImage(R.id.imageView, image);
 
         ImageView image = findViewById(R.id.detail_imageview);
         populateImage(image, this, imageUrl);
@@ -154,8 +133,11 @@ public class AssetDetailActivity extends AppCompatActivity {
 
         builder.build().load(imageUrl).resize(150,150).centerCrop().into(image);
     }
-
     private void setText(int id, String text) {
         ((TextView)findViewById(id)).setText(text);
+    }
+
+    private void setImage(int id, Bitmap image) {
+        ((ImageView)findViewById(id)).setImageBitmap(image);
     }
 }

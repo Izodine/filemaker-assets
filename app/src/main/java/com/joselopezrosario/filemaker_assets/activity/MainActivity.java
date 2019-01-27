@@ -1,4 +1,4 @@
-package com.joselopezrosario.filemaker_assets;
+package com.joselopezrosario.filemaker_assets.activity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,13 +10,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
-import com.joselopezrosario.androidfm.FmData;
-import com.joselopezrosario.androidfm.FmRecord;
+import com.joselopezrosario.filemaker_assets.Asset;
+import com.joselopezrosario.filemaker_assets.R;
 import com.joselopezrosario.filemaker_assets.adapter.AssetRecyclerViewAdapter;
 import com.joselopezrosario.filemaker_assets.util.NetworkUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -46,19 +45,14 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                FmData data = NetworkUtil.getAllRecords(context);
+                final ArrayList<Asset> data = NetworkUtil.getAllRecords(context);
 
-                final int size = data.size();
-
-                final List<FmRecord> records = new ArrayList<>();
-
-                for (int i = 0; i < size; i++) {
-                    records.add(data.getRecord(i));
-                }
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        assetAdapter.updateData(records);
+                        assetAdapter.updateData(data);
+                        int size = 0;
+                        if (data != null) size = data.size();
                         resultsCounter.setText(String.format(Locale.ENGLISH,"Showing %d Results.", size));
                     }
                 });

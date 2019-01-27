@@ -37,12 +37,10 @@ public class AssetDetailActivity extends AppCompatActivity {
         setText(R.id.detail_book_value_textview, String.format(Locale.ENGLISH, "$%s", cost));
         setImage(R.id.imageView, image);
 
-
         if(availability.equalsIgnoreCase("available"))
             setText(R.id.detail_checked_textview, "Checked In");
         else
             setText(R.id.detail_checked_textview, String.format("Due %s", dateDue));
-
     }
     private void setText(int id, String text) {
         ((TextView)findViewById(id)).setText(text);

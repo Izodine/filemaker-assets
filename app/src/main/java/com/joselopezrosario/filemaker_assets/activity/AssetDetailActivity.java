@@ -1,8 +1,11 @@
 package com.joselopezrosario.filemaker_assets.activity;
 
 import android.graphics.Bitmap;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -47,22 +50,19 @@ public class AssetDetailActivity extends AppCompatActivity {
         setText(R.id.detail_condition_status, condition);
         setText(R.id.detail_location_textview, location);
         setText(R.id.detail_book_value_textview, String.format(Locale.ENGLISH, "$%s", cost));
-        setImage(R.id.imageView, image);
-
-        ImageView image = findViewById(R.id.detail_imageview);
-        populateImage(image, this, imageUrl);
+        setImage(R.id.detail_imageview, image);
 
         isCheckingIn = availability.equalsIgnoreCase("available");
 
         if(isCheckingIn) {
-            populateCheckinStateFields(record);
+            populateCheckinStateFields();
         } else {
-            populateCheckoutStateFields(record);
+            populateCheckoutStateFields(asset);
         }
 
     }
 
-    private void populateCheckinStateFields(FmRecord record) {
+    private void populateCheckinStateFields() {
         setText(R.id.detail_checked_textview, getString(R.string.checked_in));
         Button checkOutButton = findViewById(R.id.check_button);
         checkOutButton.setText(R.string.check_out);
@@ -77,8 +77,8 @@ public class AssetDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void populateCheckoutStateFields(FmRecord record) {
-        setText(R.id.detail_checked_textview, String.format("Due %s", record.getValue("Date Due Popover")));
+    private void populateCheckoutStateFields(Asset record) {
+        setText(R.id.detail_checked_textview, String.format("Due %s", record.getDate_due_AsString()));
         Button checkInButton = findViewById(R.id.check_button);
         checkInButton.setText(R.string.check_in);
 
@@ -104,35 +104,6 @@ public class AssetDetailActivity extends AppCompatActivity {
         outState.putBoolean(CHECK_IN_FLAG, isCheckingIn);
     }
 
-    private void populateImage(@NonNull ImageView image, final Context context, String imageUrl) {
-        OkHttpClient downloader = new OkHttpClient()
-                .newBuilder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Interceptor.Chain chain) throws IOException {
-                        final Request original = chain.request();
-                        final Request authorized = original.newBuilder()
-                                .addHeader(FmCookie.getName(context), FmCookie.getValue(context))
-                                .build();
-                        return chain.proceed(authorized);
-                    }
-                })
-                .cache(new Cache(context.getCacheDir(), 25 * 1024 * 1024))
-                .build();
-
-        Picasso.Builder builder = new Picasso
-                .Builder(context)
-                .downloader(new OkHttp3Downloader(downloader));
-
-        builder.listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                exception.printStackTrace();
-            }
-        });
-
-        builder.build().load(imageUrl).resize(150,150).centerCrop().into(image);
-    }
     private void setText(int id, String text) {
         ((TextView)findViewById(id)).setText(text);
     }

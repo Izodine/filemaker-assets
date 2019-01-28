@@ -9,15 +9,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.joselopezrosario.filemaker_assets.Asset;
+import com.joselopezrosario.filemaker_assets.model.Asset;
 import com.joselopezrosario.filemaker_assets.R;
-import com.joselopezrosario.filemaker_assets.fragment.CheckinFragment;
+import com.joselopezrosario.filemaker_assets.fragment.CheckinDialogFragment;
 
 import java.util.Locale;
 
 public class AssetDetailActivity extends AppCompatActivity {
 
-    public static final String CHECK_IN_FLAG = "CHECK_IN_FLAG";
+    public static final String RECORD_EXTRA = "RECORD_EXTRA";
+
+    private static final String CHECK_IN_FLAG = "CHECK_IN_FLAG";
     private boolean isCheckingIn;
 
     @Override
@@ -25,7 +27,7 @@ public class AssetDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asset_detail);
 
-        Asset asset = getIntent().getParcelableExtra("RECORD_EXTRA");
+        Asset asset = getIntent().getParcelableExtra(RECORD_EXTRA);
 
         String assetName = asset.getItem();
         String availability = asset.getStatusVerbose();
@@ -33,7 +35,6 @@ public class AssetDetailActivity extends AppCompatActivity {
         String condition = asset.getCondition();
         String location = asset.getLocation();
         String cost = String.valueOf(asset.getCost());
-        String dateDue = asset.getDateDueAsString();
         Bitmap image = asset.getThumbnailImage();
 
         setText(R.id.detail_title_textview, assetName);
@@ -62,22 +63,22 @@ public class AssetDetailActivity extends AppCompatActivity {
         checkOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fm = getSupportFragmentManager();
-                CheckinFragment editNameDialogFragment = new CheckinFragment();
-                editNameDialogFragment.show(fm, "check-out-fragment");
+
             }
         });
     }
 
     private void populateCheckoutStateFields(Asset record) {
-        setText(R.id.detail_checked_textview, String.format("Due %s", record.getDateDueAsString()));
+        setText(R.id.detail_checked_textview, String.format(getString(R.string.date_due_detail), record.getDateDueAsString()));
         Button checkInButton = findViewById(R.id.check_button);
         checkInButton.setText(R.string.check_in);
 
         checkInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                FragmentManager fm = getSupportFragmentManager();
+                CheckinDialogFragment editNameDialogFragment = new CheckinDialogFragment();
+                editNameDialogFragment.show(fm, "check-in-fragment");
             }
         });
     }

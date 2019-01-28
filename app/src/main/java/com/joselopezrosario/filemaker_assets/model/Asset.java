@@ -1,4 +1,4 @@
-package com.joselopezrosario.filemaker_assets;
+package com.joselopezrosario.filemaker_assets.model;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="checkin_spinner_choices">
+        <item>Located</item>
+        <item>Not Located</item>
+    </string-array>
+</resources>

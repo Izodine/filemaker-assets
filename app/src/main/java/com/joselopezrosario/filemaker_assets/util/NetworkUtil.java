@@ -9,7 +9,7 @@ import com.joselopezrosario.androidfm.FmFind;
 import com.joselopezrosario.androidfm.FmRecord;
 import com.joselopezrosario.androidfm.FmRequest;
 import com.joselopezrosario.androidfm.FmResponse;
-import com.joselopezrosario.filemaker_assets.Asset;
+import com.joselopezrosario.filemaker_assets.model.Asset;
 import com.joselopezrosario.filemaker_assets.BuildConfig;
 
 import java.util.ArrayList;

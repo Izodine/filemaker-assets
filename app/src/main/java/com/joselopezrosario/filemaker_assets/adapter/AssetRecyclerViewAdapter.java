@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.joselopezrosario.filemaker_assets.Asset;
+import com.joselopezrosario.filemaker_assets.model.Asset;
 import com.joselopezrosario.filemaker_assets.R;
 import com.joselopezrosario.filemaker_assets.activity.AssetDetailActivity;
 

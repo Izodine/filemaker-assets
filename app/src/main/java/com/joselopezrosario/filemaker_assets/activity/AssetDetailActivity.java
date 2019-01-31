@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.joselopezrosario.filemaker_assets.R;
 import com.joselopezrosario.filemaker_assets.fragment.CheckinDialogFragment;
+import com.joselopezrosario.filemaker_assets.fragment.CheckoutDialogFragment;
 import com.joselopezrosario.filemaker_assets.model.Asset;
 import com.joselopezrosario.filemaker_assets.util.DownloadImage;
 

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.joselopezrosario.filemaker_assets.Asset;
+import com.joselopezrosario.filemaker_assets.model.Asset;
 import com.joselopezrosario.filemaker_assets.R;
 import com.joselopezrosario.filemaker_assets.activity.AssetDetailActivity;
 
@@ -37,11 +37,11 @@ public class AssetRecyclerViewAdapter extends RecyclerView.Adapter<AssetRecycler
     public void onBindViewHolder(@NonNull final AssetViewHolder assetViewModel, int position) {
         final Asset record = records.get(position);
         assetViewModel.titleText.setText(record.getItem());
-        assetViewModel.assignedToText.setText(record.getAssigned_to());
+        assetViewModel.assignedToText.setText(record.getAssignedTo());
         assetViewModel.categoryText.setText(record.getCategory());
-        assetViewModel.verboseStatusText.setText(record.getStatus_verbose());
-        assetViewModel.listImage.setImageBitmap(record.getThumbnail_image());
-        String dateDue = record.getDate_due_AsString();
+        assetViewModel.verboseStatusText.setText(record.getStatusVerbose());
+        assetViewModel.listImage.setImageBitmap(record.getThumbnailImage());
+        String dateDue = record.getDateDueAsString();
         if(dateDue.isEmpty()) {
             assetViewModel.dueDateText.setVisibility(View.GONE);
         } else {

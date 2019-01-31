@@ -11,7 +11,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class DownloadImage {
+public final class DownloadImage {
+
+    private DownloadImage() { /*Suppressed Constructor*/}
+
     public static Bitmap execute(String containerUrl) {
         Bitmap bitmap = null;
         InputStream in = null;

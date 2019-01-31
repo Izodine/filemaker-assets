@@ -9,7 +9,7 @@ import com.joselopezrosario.androidfm.FmFind;
 import com.joselopezrosario.androidfm.FmRecord;
 import com.joselopezrosario.androidfm.FmRequest;
 import com.joselopezrosario.androidfm.FmResponse;
-import com.joselopezrosario.filemaker_assets.Asset;
+import com.joselopezrosario.filemaker_assets.model.Asset;
 import com.joselopezrosario.filemaker_assets.BuildConfig;
 
 import java.util.ArrayList;
@@ -36,16 +36,16 @@ public final class NetworkUtil {
         while (i < size) {
             FmRecord record = fmData.getRecord(i);
             Asset asset = new Asset();
-            asset.setAsset_id(record.getInt(Asset.ASSET_ID));
+            asset.setAssetId(record.getInt(Asset.ASSET_ID));
             asset.setItem(record.getString(Asset.ITEM));
-            asset.setStatus_verbose(record.getString(Asset.STATUS));
-            asset.setAssigned_to(record.getString(Asset.ASSIGNED_TO));
+            asset.setStatusVerbose(record.getString(Asset.STATUS));
+            asset.setAssignedTo(record.getString(Asset.ASSIGNED_TO));
             asset.setCondition(record.getString(Asset.CONDITION));
             asset.setLocation(record.getString(Asset.LOCATION));
             asset.setCost(record.getDouble(Asset.COST));
             String thumbnailUrl = record.getString(Asset.THUMBNAIL_IMAGE);
             Bitmap thumbnail = DownloadImage.execute(thumbnailUrl);
-            asset.setThumbnail_image(thumbnail);
+            asset.setThumbnailImage(thumbnail);
             assets.add(asset);
             i ++;
         }

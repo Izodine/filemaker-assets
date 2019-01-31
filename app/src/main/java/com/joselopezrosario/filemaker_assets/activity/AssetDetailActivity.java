@@ -1,33 +1,41 @@
 package com.joselopezrosario.filemaker_assets.activity;
 
 import android.graphics.Bitmap;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.joselopezrosario.filemaker_assets.Asset;
+import com.joselopezrosario.filemaker_assets.model.Asset;
 import com.joselopezrosario.filemaker_assets.R;
+import com.joselopezrosario.filemaker_assets.fragment.CheckinDialogFragment;
 
 import java.util.Locale;
 
 public class AssetDetailActivity extends AppCompatActivity {
+
+    public static final String RECORD_EXTRA = "RECORD_EXTRA";
+
+    private static final String CHECK_IN_FLAG = "CHECK_IN_FLAG";
+    private boolean isCheckingIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asset_detail);
 
-        Asset asset = getIntent().getParcelableExtra("RECORD_EXTRA");
+        Asset asset = getIntent().getParcelableExtra(RECORD_EXTRA);
 
         String assetName = asset.getItem();
-        String availability = asset.getStatus_verbose();
-        String assignedTo = asset.getAssigned_to();
+        String availability = asset.getStatusVerbose();
+        String assignedTo = asset.getAssignedTo();
         String condition = asset.getCondition();
         String location = asset.getLocation();
         String cost = String.valueOf(asset.getCost());
-        String dateDue = asset.getDate_due_AsString();
-        Bitmap image = asset.getThumbnail_image();
+        Bitmap image = asset.getThumbnailImage();
 
         setText(R.id.detail_title_textview, assetName);
         setText(R.id.detail_availability_textview, availability);
@@ -35,13 +43,60 @@ public class AssetDetailActivity extends AppCompatActivity {
         setText(R.id.detail_condition_status, condition);
         setText(R.id.detail_location_textview, location);
         setText(R.id.detail_book_value_textview, String.format(Locale.ENGLISH, "$%s", cost));
-        setImage(R.id.imageView, image);
+        setImage(R.id.detail_imageview, image);
 
-        if(availability.equalsIgnoreCase("available"))
-            setText(R.id.detail_checked_textview, "Checked In");
-        else
-            setText(R.id.detail_checked_textview, String.format("Due %s", dateDue));
+        isCheckingIn = availability.equalsIgnoreCase("available");
+
+        if(isCheckingIn) {
+            populateCheckinStateFields();
+        } else {
+            populateCheckoutStateFields(asset);
+        }
+
     }
+
+    private void populateCheckinStateFields() {
+        setText(R.id.detail_checked_textview, getString(R.string.checked_in));
+        Button checkOutButton = findViewById(R.id.check_button);
+        checkOutButton.setText(R.string.check_out);
+
+        checkOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+    }
+
+    private void populateCheckoutStateFields(Asset record) {
+        setText(R.id.detail_checked_textview, String.format(getString(R.string.date_due_detail), record.getDateDueAsString()));
+        Button checkInButton = findViewById(R.id.check_button);
+        checkInButton.setText(R.string.check_in);
+
+        checkInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getSupportFragmentManager();
+                CheckinDialogFragment editNameDialogFragment = new CheckinDialogFragment();
+                editNameDialogFragment.show(fm, "check-in-fragment");
+            }
+        });
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        isCheckingIn = savedInstanceState.getBoolean(CHECK_IN_FLAG);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean(CHECK_IN_FLAG, isCheckingIn);
+    }
+
     private void setText(int id, String text) {
         ((TextView)findViewById(id)).setText(text);
     }

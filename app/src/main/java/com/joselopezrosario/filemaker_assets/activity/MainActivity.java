@@ -10,7 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
-import com.joselopezrosario.filemaker_assets.Asset;
+import com.joselopezrosario.filemaker_assets.model.Asset;
 import com.joselopezrosario.filemaker_assets.R;
 import com.joselopezrosario.filemaker_assets.adapter.AssetRecyclerViewAdapter;
 import com.joselopezrosario.filemaker_assets.util.NetworkUtil;

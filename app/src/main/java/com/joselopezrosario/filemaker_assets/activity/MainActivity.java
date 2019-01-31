@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        assetAdapter.updateData(data);
+                        assetAdapter.updateData(getApplicationContext(), data);
                         int size = 0;
                         if (data != null) size = data.size();
                         resultsCounter.setText(String.format(Locale.ENGLISH,"Showing %d Results.", size));

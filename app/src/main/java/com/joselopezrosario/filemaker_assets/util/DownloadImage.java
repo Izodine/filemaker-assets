@@ -1,43 +1,51 @@
 package com.joselopezrosario.filemaker_assets.util;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Context;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.widget.ImageView;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import com.joselopezrosario.androidfm.FmCookie;
+import com.squareup.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
-public final class DownloadImage {
+import okhttp3.Cache;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
-    private DownloadImage() { /*Suppressed Constructor*/}
+public class DownloadImage {
 
-    public static Bitmap execute(String containerUrl) {
-        Bitmap bitmap = null;
-        InputStream in = null;
-        OutputStream os = null;
-        try {
-            URL url = new URL(containerUrl);
-            HttpURLConnection conn;
-            conn = (HttpURLConnection) url.openConnection();
-            conn.connect();
-            in = conn.getInputStream();
-            bitmap = BitmapFactory.decodeStream(in);
-            conn.disconnect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (in != null)
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-        }
+    static public void set(@NonNull ImageView image, final Context context, String imageUrl, int width, int height) {
+        OkHttpClient downloader = new OkHttpClient()
+                .newBuilder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Interceptor.Chain chain) throws IOException {
+                        final Request original = chain.request();
+                        final Request authorized = original.newBuilder()
+                                .addHeader(FmCookie.getName(), FmCookie.getValue(context))
+                                .build();
+                        return chain.proceed(authorized);
+                    }
+                })
+                .cache(new Cache(context.getCacheDir(), 25 * 1024 * 1024))
+                .build();
 
-        return bitmap;
+        Picasso.Builder builder = new Picasso
+                .Builder(context)
+                .downloader(new OkHttp3Downloader(downloader));
+
+        builder.listener(new Picasso.Listener() {
+            @Override
+            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                exception.printStackTrace();
+            }
+        });
+
+        builder.build().load(imageUrl).resize(width, height).centerInside().into(image);
     }
 }

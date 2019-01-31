@@ -1,12 +1,13 @@
 package com.joselopezrosario.filemaker_assets.model;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.Date;
 
 public class Asset implements Parcelable {
+    public static final String RECORD_ID = "recordId";
+    public static final String MOD_ID = "modId";
     public static final String ASSET_ID = "ASSET ID MATCH FIELD";
     public static final String ITEM = "Item";
     public static final String STATUS = "Verbose Status";
@@ -14,9 +15,14 @@ public class Asset implements Parcelable {
     public static final String CATEGORY = "Category To";
     public static final String CONDITION = "Condition";
     public static final String LOCATION = "Location";
+    public static final String DATE_CHECKED_IN = "Date Checked In";
+    public static final String DATE_CHECKED_OUT = "Date Checked Out";
     public static final String COST = "Cost";
     public static final String THUMBNAIL_IMAGE = "Asset Thumbnail";
+    public static final String FULLSIZE_IMAGE = "Asset Fullsize";
 
+    private int recordId;
+    private int modId;
     private int assetId;
     private String item;
     private String statusVerbose;
@@ -24,17 +30,22 @@ public class Asset implements Parcelable {
     private String category;
     private String condition;
     private String location;
+    private String dateCheckedIn;
+    private String dateCheckedOut;
     private double cost;
-    private Date date_due;
+    private Date dateDue;
     private String thumbnailUrl;
-    private Bitmap thumbnailImage;
+    private String imageUrl;
 
     public Asset() {
     }
 
-    public Asset(int assetId, String item, String status_verbose, String assignedTo,
-                 String category, String condition, String location, double cost, Date date_due,
-                 String thumbnailUrl, Bitmap thumbnailImage) {
+    public Asset(int recordId, int modId, int assetId, String item, String status_verbose, String assignedTo,
+                 String category, String condition, String location, String dateCheckedIn, String dateCheckedOut,
+                 double cost, Date dateDue,
+                 String thumbnailUrl, String imageUrl) {
+        this.recordId = recordId;
+        this.modId = modId;
         this.assetId = assetId;
         this.item = item;
         this.statusVerbose = status_verbose;
@@ -42,10 +53,28 @@ public class Asset implements Parcelable {
         this.category = category;
         this.condition = condition;
         this.location = location;
+        this.dateCheckedIn = dateCheckedIn;
+        this.dateCheckedOut = dateCheckedOut;
         this.cost = cost;
-        this.date_due = date_due;
+        this.dateDue = dateDue;
         this.thumbnailUrl = thumbnailUrl;
-        this.thumbnailImage = thumbnailImage;
+        this.imageUrl = imageUrl;
+    }
+
+    public int getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(int recordId) {
+        this.recordId = recordId;
+    }
+
+    public int getModId() {
+        return modId;
+    }
+
+    public void setModId(int modId) {
+        this.modId = modId;
     }
 
     public int getAssetId() {
@@ -96,6 +125,22 @@ public class Asset implements Parcelable {
         this.location = location;
     }
 
+    public String getDateCheckedIn() {
+        return dateCheckedIn;
+    }
+
+    public void setDateCheckedIn(String dateCheckedIn) {
+        this.dateCheckedIn = dateCheckedIn;
+    }
+
+    public String getDateCheckedOut() {
+        return dateCheckedOut;
+    }
+
+    public void setDateCheckedOut(String dateCheckedOut) {
+        this.dateCheckedOut = dateCheckedOut;
+    }
+
     public double getCost() {
         return cost;
     }
@@ -105,18 +150,18 @@ public class Asset implements Parcelable {
     }
 
     public Date getDateDue() {
-        return date_due;
+        return dateDue;
     }
 
     public void setDateDue(Date dateDue) {
-        this.date_due = dateDue;
+        this.dateDue = dateDue;
     }
 
     public String getDateDueAsString(){
-        if ( this.date_due == null){
+        if ( this.dateDue == null){
             return "";
         }else{
-            return this.date_due.toString();
+            return this.dateDue.toString();
         }
     }
 
@@ -128,6 +173,14 @@ public class Asset implements Parcelable {
         this.thumbnailUrl = thumbnailUrl;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public String getCategory() {
         return category;
     }
@@ -136,15 +189,9 @@ public class Asset implements Parcelable {
         this.category = category;
     }
 
-    public Bitmap getThumbnailImage() {
-        return thumbnailImage;
-    }
-
-    public void setThumbnailImage(Bitmap thumbnailImage) {
-        this.thumbnailImage = thumbnailImage;
-    }
-
     protected Asset(Parcel in) {
+        recordId = in.readInt();
+        modId = in.readInt();
         assetId = in.readInt();
         item = in.readString();
         statusVerbose = in.readString();
@@ -152,11 +199,13 @@ public class Asset implements Parcelable {
         category = in.readString();
         condition = in.readString();
         location = in.readString();
+        dateCheckedIn = in.readString();
+        dateCheckedOut = in.readString();
         cost = in.readDouble();
         long tmpDate_due = in.readLong();
-        date_due = tmpDate_due != -1 ? new Date(tmpDate_due) : null;
+        dateDue = tmpDate_due != -1 ? new Date(tmpDate_due) : null;
         thumbnailUrl = in.readString();
-        thumbnailImage = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
+        imageUrl = in.readString();
     }
 
     @Override
@@ -166,6 +215,8 @@ public class Asset implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(recordId);
+        dest.writeInt(modId);
         dest.writeInt(assetId);
         dest.writeString(item);
         dest.writeString(statusVerbose);
@@ -173,10 +224,12 @@ public class Asset implements Parcelable {
         dest.writeString(category);
         dest.writeString(condition);
         dest.writeString(location);
+        dest.writeString(dateCheckedIn);
+        dest.writeString(dateCheckedOut);
         dest.writeDouble(cost);
-        dest.writeLong(date_due != null ? date_due.getTime() : -1L);
+        dest.writeLong(dateDue != null ? dateDue.getTime() : -1L);
         dest.writeString(thumbnailUrl);
-        dest.writeValue(thumbnailImage);
+        dest.writeString(imageUrl);
     }
 
     @SuppressWarnings("unused")

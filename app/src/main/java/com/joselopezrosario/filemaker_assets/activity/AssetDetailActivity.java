@@ -1,19 +1,18 @@
 package com.joselopezrosario.filemaker_assets.activity;
 
 import android.graphics.Bitmap;
-import android.support.v4.app.Fragment;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.joselopezrosario.filemaker_assets.fragment.CheckoutDialogFragment;
-import com.joselopezrosario.filemaker_assets.model.Asset;
 import com.joselopezrosario.filemaker_assets.R;
 import com.joselopezrosario.filemaker_assets.fragment.CheckinDialogFragment;
+import com.joselopezrosario.filemaker_assets.model.Asset;
+import com.joselopezrosario.filemaker_assets.util.DownloadImage;
 
 import java.util.Locale;
 
@@ -31,13 +30,14 @@ public class AssetDetailActivity extends AppCompatActivity {
 
         Asset asset = getIntent().getParcelableExtra(RECORD_EXTRA);
 
+        final int recordId = asset.getRecordId();
         String assetName = asset.getItem();
         String availability = asset.getStatusVerbose();
         String assignedTo = asset.getAssignedTo();
         String condition = asset.getCondition();
         String location = asset.getLocation();
         String cost = String.valueOf(asset.getCost());
-        Bitmap image = asset.getThumbnailImage();
+        String imageUrl = asset.getImageUrl();
 
         setText(R.id.detail_title_textview, assetName);
         setText(R.id.detail_availability_textview, availability);
@@ -45,19 +45,20 @@ public class AssetDetailActivity extends AppCompatActivity {
         setText(R.id.detail_condition_status, condition);
         setText(R.id.detail_location_textview, location);
         setText(R.id.detail_book_value_textview, String.format(Locale.ENGLISH, "$%s", cost));
-        setImage(R.id.detail_imageview, image);
+        ImageView imageView = findViewById(R.id.detail_imageview);
+        DownloadImage.set(imageView, getApplicationContext(), imageUrl, 450, 450);
 
         isCheckingIn = availability.equalsIgnoreCase("available");
 
-        if(isCheckingIn) {
-            populateCheckinStateFields();
+        if (isCheckingIn) {
+            populateCheckinStateFields(recordId);
         } else {
             populateCheckoutStateFields(asset);
         }
 
     }
 
-    private void populateCheckinStateFields() {
+    private void populateCheckinStateFields(final int recordId) {
         setText(R.id.detail_checked_textview, getString(R.string.checked_in));
         Button checkOutButton = findViewById(R.id.check_button);
         checkOutButton.setText(R.string.check_out);
@@ -72,7 +73,7 @@ public class AssetDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void populateCheckoutStateFields(Asset record) {
+    private void populateCheckoutStateFields(final Asset record) {
         setText(R.id.detail_checked_textview, String.format(getString(R.string.date_due_detail), record.getDateDueAsString()));
         Button checkInButton = findViewById(R.id.check_button);
         checkInButton.setText(R.string.check_in);
@@ -81,8 +82,11 @@ public class AssetDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 FragmentManager fm = getSupportFragmentManager();
-                CheckinDialogFragment checkinFragment = new CheckinDialogFragment();
-                checkinFragment.show(fm, "check-in-fragment");
+                CheckinDialogFragment editNameDialogFragment = new CheckinDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("recordId", record.getRecordId());
+                editNameDialogFragment.setArguments(bundle);
+                editNameDialogFragment.show(fm, "check-in-fragment");
             }
         });
     }
@@ -102,10 +106,10 @@ public class AssetDetailActivity extends AppCompatActivity {
     }
 
     private void setText(int id, String text) {
-        ((TextView)findViewById(id)).setText(text);
+        ((TextView) findViewById(id)).setText(text);
     }
 
     private void setImage(int id, Bitmap image) {
-        ((ImageView)findViewById(id)).setImageBitmap(image);
+        ((ImageView) findViewById(id)).setImageBitmap(image);
     }
 }

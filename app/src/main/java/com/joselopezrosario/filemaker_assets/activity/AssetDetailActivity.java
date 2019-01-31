@@ -1,6 +1,7 @@
 package com.joselopezrosario.filemaker_assets.activity;
 
 import android.graphics.Bitmap;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.joselopezrosario.filemaker_assets.fragment.CheckoutDialogFragment;
 import com.joselopezrosario.filemaker_assets.model.Asset;
 import com.joselopezrosario.filemaker_assets.R;
 import com.joselopezrosario.filemaker_assets.fragment.CheckinDialogFragment;
@@ -63,7 +65,9 @@ public class AssetDetailActivity extends AppCompatActivity {
         checkOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                FragmentManager fm = getSupportFragmentManager();
+                CheckoutDialogFragment checkoutFragment = new CheckoutDialogFragment();
+                checkoutFragment.show(fm, "check-out-fragment");
             }
         });
     }
@@ -77,8 +81,8 @@ public class AssetDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 FragmentManager fm = getSupportFragmentManager();
-                CheckinDialogFragment editNameDialogFragment = new CheckinDialogFragment();
-                editNameDialogFragment.show(fm, "check-in-fragment");
+                CheckinDialogFragment checkinFragment = new CheckinDialogFragment();
+                checkinFragment.show(fm, "check-in-fragment");
             }
         });
     }

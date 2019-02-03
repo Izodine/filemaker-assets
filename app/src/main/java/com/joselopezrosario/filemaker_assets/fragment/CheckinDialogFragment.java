@@ -112,7 +112,7 @@ public class CheckinDialogFragment extends DialogFragment implements CheckinDial
     @Override
     public String getDateChoice() {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy", Locale.UK);
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.UK);
         return format.format(cal.getTime());
     }
 

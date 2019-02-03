@@ -22,12 +22,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class CheckinCheckinDialogFragment extends DialogFragment implements CheckinDialogValuesConnection {
+public class CheckinDialogFragment extends DialogFragment implements CheckinDialogValuesConnection {
 
     private int recordId;
     private OnDialogCommitListener closedListener;
 
-    public CheckinCheckinDialogFragment() {}
+    public CheckinDialogFragment() {}
 
     public void attachCloseListener(OnDialogCommitListener listener) {
         closedListener = listener;

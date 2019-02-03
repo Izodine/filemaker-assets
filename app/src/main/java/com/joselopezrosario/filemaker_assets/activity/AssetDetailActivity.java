@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.joselopezrosario.filemaker_assets.R;
 import com.joselopezrosario.filemaker_assets.interfaces.OnDialogCommitListener;
-import com.joselopezrosario.filemaker_assets.fragment.CheckinCheckinDialogFragment;
+import com.joselopezrosario.filemaker_assets.fragment.CheckinDialogFragment;
 import com.joselopezrosario.filemaker_assets.fragment.CheckoutDialogFragment;
 import com.joselopezrosario.filemaker_assets.model.Asset;
 import com.joselopezrosario.filemaker_assets.util.DownloadImage;
@@ -94,7 +94,7 @@ public class AssetDetailActivity extends AppCompatActivity implements OnDialogCo
             @Override
             public void onClick(View view) {
                 FragmentManager fm = getSupportFragmentManager();
-                CheckinCheckinDialogFragment editNameDialogFragment = new CheckinCheckinDialogFragment();
+                CheckinDialogFragment editNameDialogFragment = new CheckinDialogFragment();
                 editNameDialogFragment.attachCloseListener(thisActivity);
                 Bundle bundle = new Bundle();
                 bundle.putInt("recordId", record.getRecordId());

@@ -6,4 +6,11 @@
     <string name="check_out">Check Out</string>
     <string name="check_in">Check In</string>
     <string name="date_due_detail">Due %s</string>
+    <string name="checkin_dialog_title">Check In Asset</string>
+    <string name="dialog_location">Location</string>
+    <string name="condition_good">Good</string>
+    <string name="condition_fair">Fair</string>
+    <string name="condition_damaged">Damanged</string>
+    <string name="condition_needsrepair">Need Repair</string>
+    <string name="condition_broken">Broken</string>
 </resources>

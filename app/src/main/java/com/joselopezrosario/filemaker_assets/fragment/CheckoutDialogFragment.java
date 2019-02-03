@@ -12,10 +12,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.joselopezrosario.filemaker_assets.R;
+import com.joselopezrosario.filemaker_assets.interfaces.CheckoutDialogValuesConnection;
 
 import java.util.Calendar;
 
-public class CheckoutDialogFragment extends DialogFragment {
+public class CheckoutDialogFragment extends DialogFragment implements CheckoutDialogValuesConnection {
 
     public CheckoutDialogFragment() {}
 
@@ -44,10 +45,25 @@ public class CheckoutDialogFragment extends DialogFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-
     }
 
+    @Override
+    public String getOutToChoice() {
+        return null;
+    }
 
+    @Override
+    public String getLocationChoice() {
+        return null;
+    }
 
+    @Override
+    public String getCurrentDateChoice() {
+        return null;
+    }
+
+    @Override
+    public String getDueDateChoice() {
+        return null;
+    }
 }

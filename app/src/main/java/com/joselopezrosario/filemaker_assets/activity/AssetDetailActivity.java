@@ -1,7 +1,7 @@
 package com.joselopezrosario.filemaker_assets.activity;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -10,14 +10,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.joselopezrosario.filemaker_assets.R;
-import com.joselopezrosario.filemaker_assets.fragment.CheckinDialogFragment;
+import com.joselopezrosario.filemaker_assets.interfaces.OnDialogCommitListener;
+import com.joselopezrosario.filemaker_assets.fragment.CheckinCheckinDialogFragment;
 import com.joselopezrosario.filemaker_assets.fragment.CheckoutDialogFragment;
 import com.joselopezrosario.filemaker_assets.model.Asset;
 import com.joselopezrosario.filemaker_assets.util.DownloadImage;
+import com.joselopezrosario.filemaker_assets.util.NetworkUtil;
 
 import java.util.Locale;
 
-public class AssetDetailActivity extends AppCompatActivity {
+public class AssetDetailActivity extends AppCompatActivity implements OnDialogCommitListener {
 
     public static final String RECORD_EXTRA = "RECORD_EXTRA";
 
@@ -32,6 +34,7 @@ public class AssetDetailActivity extends AppCompatActivity {
         Asset asset = getIntent().getParcelableExtra(RECORD_EXTRA);
 
         final int recordId = asset.getRecordId();
+
         String assetName = asset.getItem();
         String availability = asset.getStatusVerbose();
         String assignedTo = asset.getAssignedTo();
@@ -70,6 +73,13 @@ public class AssetDetailActivity extends AppCompatActivity {
                 FragmentManager fm = getSupportFragmentManager();
                 CheckoutDialogFragment checkoutFragment = new CheckoutDialogFragment();
                 checkoutFragment.show(fm, "check-out-fragment");
+                final Handler handler = new Handler();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        NetworkUtil.editCheckOutTest(recordId,"","","");
+                    }
+                }).start();
             }
         });
     }
@@ -78,12 +88,14 @@ public class AssetDetailActivity extends AppCompatActivity {
         setText(R.id.detail_checked_textview, String.format(getString(R.string.date_due_detail), record.getDateDueAsString()));
         Button checkInButton = findViewById(R.id.check_button);
         checkInButton.setText(R.string.check_in);
+        final AssetDetailActivity thisActivity = this;
 
         checkInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FragmentManager fm = getSupportFragmentManager();
-                CheckinDialogFragment editNameDialogFragment = new CheckinDialogFragment();
+                CheckinCheckinDialogFragment editNameDialogFragment = new CheckinCheckinDialogFragment();
+                editNameDialogFragment.attachCloseListener(thisActivity);
                 Bundle bundle = new Bundle();
                 bundle.putInt("recordId", record.getRecordId());
                 editNameDialogFragment.setArguments(bundle);
@@ -110,7 +122,10 @@ public class AssetDetailActivity extends AppCompatActivity {
         ((TextView) findViewById(id)).setText(text);
     }
 
-    private void setImage(int id, Bitmap image) {
-        ((ImageView) findViewById(id)).setImageBitmap(image);
+    @Override
+    public void onDialogCommit() {
+
     }
+
+
 }

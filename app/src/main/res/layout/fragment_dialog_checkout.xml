@@ -40,7 +40,7 @@
                 android:textSize="18sp" />
 
             <Spinner
-                android:id="@+id/spinner"
+                android:id="@+id/dialog_checkout_outto_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>
@@ -67,7 +67,7 @@
                 android:textSize="18sp" />
 
             <Spinner
-                android:id="@+id/spinner2"
+                android:id="@+id/dialog_checkout_location_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>
@@ -75,6 +75,7 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
+        android:id="@+id/dialog_checkout_date_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp">

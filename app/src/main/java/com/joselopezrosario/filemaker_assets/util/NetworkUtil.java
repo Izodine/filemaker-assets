@@ -11,6 +11,7 @@ import com.joselopezrosario.androidfm.FmRecord;
 import com.joselopezrosario.androidfm.FmRequest;
 import com.joselopezrosario.androidfm.FmResponse;
 import com.joselopezrosario.androidfm.FmScript;
+import com.joselopezrosario.filemaker_assets.interfaces.CheckinDialogValuesConnection;
 import com.joselopezrosario.filemaker_assets.model.Asset;
 import com.joselopezrosario.filemaker_assets.BuildConfig;
 
@@ -63,16 +64,59 @@ public final class NetworkUtil {
         return assets;
     }
 
-    public static FmResponse edit(int recordId, String location, String dateCheckedIn, String condition) {
+    public static Asset getRecordById(Context context, int recordId) {
+
+        if(recordId < 0) {
+            throw new IllegalArgumentException("Record ID cannot be less than 0.");
+        }
+
+        FmRequest request = new FmRequest().login(URL, ACCOUNT, PASSWORD).build();
+        FmResponse response = Fm.execute(request);
+        String token = response.getToken();
+        FmFind fmFind = new FmFind().newRequest().set(Asset.ASSET_ID, Integer.toString(recordId));
+
+        request = new FmRequest().findRecords(URL, token, LAYOUT_ASSETS, fmFind).build();
+
+        response = Fm.execute(request);
+
+        if (response == null || !response.isOk()) {
+            return null;
+        }
+
+        FmCookie.setCookie(context, URL, token,LAYOUT_ASSETS );
+        Fm.execute(new FmRequest().logout(URL, token));
+
+        FmData fmData = new FmData(response);
+
+        FmRecord record = fmData.getRecord(0);
+        Asset asset = new Asset();
+        asset.setRecordId(record.getRecordId());
+        asset.setModId(record.getModId());
+        asset.setAssetId(record.getInt(Asset.ASSET_ID));
+        asset.setItem(record.getString(Asset.ITEM));
+        asset.setStatusVerbose(record.getString(Asset.STATUS));
+        asset.setAssignedTo(record.getString(Asset.ASSIGNED_TO));
+        asset.setCondition(record.getString(Asset.CONDITION));
+        asset.setLocation(record.getString(Asset.LOCATION));
+        asset.setDateCheckedIn(record.getString(Asset.DATE_CHECKED_IN));
+        asset.setDateCheckedOut(record.getString(Asset.DATE_CHECKED_OUT));
+        asset.setCost(record.getDouble(Asset.COST));
+        asset.setThumbnailUrl(record.getString(Asset.THUMBNAIL_IMAGE));
+        asset.setImageUrl(record.getString(Asset.FULLSIZE_IMAGE));
+
+        return asset;
+    }
+
+    public static FmResponse edit(int recordId, CheckinDialogValuesConnection dvc) {
         FmResponse login = Fm.execute(new FmRequest().login(URL, ACCOUNT, PASSWORD).build());
         if ( !login.isOk()){
             return login;
         }
         String token = login.getToken();
         FmEdit edit = new FmEdit()
-                .set(Asset.CONDITION,"")
-                .set(Asset.DATE_CHECKED_IN,"")
-                .set(Asset.LOCATION,"");
+                .set(Asset.CONDITION, dvc.getConditionChoice())
+                .set(Asset.DATE_CHECKED_IN, dvc.getDateChoice())
+                .set(Asset.LOCATION, dvc.getLocationChoice());
         FmScript checkInTrigger = new FmScript().setScript("Trigger | On Check-In Close");
         FmRequest checkInAsset = new FmRequest()
                 .edit(URL, token, LAYOUT_ASSETS, recordId, edit)
@@ -82,5 +126,25 @@ public final class NetworkUtil {
         Fm.execute(new FmRequest().logout(URL, token));
         return response;
     }
+
+    public static FmResponse editCheckOutTest(int recordId, String location, String dateCheckedIn, String condition) {
+        FmResponse login = Fm.execute(new FmRequest().login(URL, ACCOUNT, PASSWORD).build());
+        if ( !login.isOk()){
+            return login;
+        }
+        String token = login.getToken();
+        FmEdit edit = new FmEdit()
+                .set(Asset.DATE_CHECKED_OUT, "02/1/2019")
+                .set("Date Due", "01/19/2020");
+        FmScript checkInTrigger = new FmScript().setScript("Trigger | On Check-Out Close");
+        FmRequest checkInAsset = new FmRequest()
+                .edit(URL, token, LAYOUT_ASSETS, recordId, edit)
+                .setScriptParams(checkInTrigger)
+                .build();
+        FmResponse response = Fm.execute(checkInAsset);
+        Fm.execute(new FmRequest().logout(URL, token));
+        return response;
+    }
+
 }
 

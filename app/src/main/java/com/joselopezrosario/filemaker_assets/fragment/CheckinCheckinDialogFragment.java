@@ -9,17 +9,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.joselopezrosario.filemaker_assets.R;
+import com.joselopezrosario.filemaker_assets.interfaces.CheckinDialogValuesConnection;
+import com.joselopezrosario.filemaker_assets.interfaces.OnDialogCommitListener;
 import com.joselopezrosario.filemaker_assets.util.NetworkUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
-public class CheckinDialogFragment extends DialogFragment {
+public class CheckinCheckinDialogFragment extends DialogFragment implements CheckinDialogValuesConnection {
+
     private int recordId;
-    public CheckinDialogFragment() {}
+    private OnDialogCommitListener closedListener;
+
+    public CheckinCheckinDialogFragment() {}
+
+    public void attachCloseListener(OnDialogCommitListener listener) {
+        closedListener = listener;
+    }
 
     @Override
     public void onStart() {
@@ -48,6 +60,8 @@ public class CheckinDialogFragment extends DialogFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        final CheckinDialogValuesConnection dvc = this;
+
         view.findViewById(R.id.dialog_checkin_cancel_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,10 +76,11 @@ public class CheckinDialogFragment extends DialogFragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        NetworkUtil.edit(recordId, "", "", "");
+                        NetworkUtil.edit(recordId, dvc);
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                closedListener.onDialogCommit();
                                 getDialog().dismiss();
                             }
                         });
@@ -79,7 +94,9 @@ public class CheckinDialogFragment extends DialogFragment {
 
         TextView dateTextview = view.findViewById(R.id.dialog_checkin_date_textview);
 
-        dateTextview.setText(Calendar.getInstance().getTime().toString());
+        String formattedDate = getDateChoice();
+
+        dateTextview.setText(formattedDate);
 
         Spinner locationSpinner = view.findViewById(R.id.dialog_location_spinner);
 
@@ -92,6 +109,46 @@ public class CheckinDialogFragment extends DialogFragment {
 
     }
 
+    @Override
+    public String getDateChoice() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy", Locale.UK);
+        return format.format(cal.getTime());
+    }
 
+    @Override
+    public String getLocationChoice() {
+        Spinner spinner = this.getView().findViewById(R.id.dialog_location_spinner);
+        return spinner.getSelectedItem().toString();
+    }
 
+    @Override
+    public String getConditionChoice() {
+        RadioGroup group = this.getView().findViewById(R.id.dialog_checkin_condition_radiogroup);
+
+        switch(group.getCheckedRadioButtonId()) {
+            case R.id.dialog_checkin_good_radiobutton:
+
+                return getString(R.string.condition_good);
+
+            case R.id.dialog_checkin_fair_radiobutton:
+
+                return getString(R.string.condition_fair);
+
+            case R.id.dialog_checkin_damaged_radiobutton:
+
+                return getString(R.string.condition_damaged);
+
+            case R.id.dialog_checkin_needsrepair_radiobutton:
+
+                return getString(R.string.condition_needsrepair);
+
+            case R.id.dialog_checkin_broken_radiobutton:
+
+                return getString(R.string.condition_broken);
+
+            default:
+                throw new IllegalStateException("Invalid Checkin Condition box State");
+        }
+    }
 }
